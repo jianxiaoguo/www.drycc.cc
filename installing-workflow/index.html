@@ -465,7 +465,7 @@
             <div class="row">
               <div class="small-12">
                 <h1 id="installing-drycc-workflow">Installing Drycc Workflow<a class="headerlink" href="#installing-drycc-workflow" title="Permanent link">&para;</a></h1>
-<p>This document is aimed at those who have already provisioned a <a href="system-requirements/#kubernetes-versions">Kubernetes v1.3.4+</a> cluster
+<p>This document is aimed at those who have already provisioned a [Kubernetes v1.12+][] cluster
 and want to install Drycc Workflow. If help is required getting started with Kubernetes and
 Drycc Workflow, follow the <a href="../quickstart/">quickstart guide</a> for assistance.</p>
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
@@ -480,16 +480,6 @@ Client: &amp;version.Version{SemVer:&quot;v2.5.0&quot;, GitCommit:&quot;012cb0ac
 Server: &amp;version.Version{SemVer:&quot;v2.5.0&quot;, GitCommit:&quot;012cb0ac1a1b2f888144ef5a67b8dab6c2d45be6&quot;, GitTreeState:&quot;clean&quot;}
 </code></pre>
 
-<h3 id="check-your-authorization">Check Your Authorization<a class="headerlink" href="#check-your-authorization" title="Permanent link">&para;</a></h3>
-<p>If your cluster uses <a href="https://kubernetes.io/docs/admin/authorization/rbac/">RBAC</a> for authorization, <code>helm</code> will need to be granted the necessary permissions to create Workflow resources.
-This can be done with the following commands:</p>
-<pre class="codehilite"><code>$ kubectl create sa tiller-deploy -n kube-system
-$ kubectl create clusterrolebinding helm --clusterrole=cluster-admin --serviceaccount=kube-system:tiller-deploy
-$ helm init --service-account=tiller-deploy
-</code></pre>
-
-<p>If <code>helm</code> is already installed in cluster without sufficient rights, simply add <code>--upgrade</code> to the <code>init</code> command above.</p>
-<p><strong>Note</strong>: Specific <code>helm</code> permissions haven't been sorted yet and details may change (watch <code>helm</code> <a href="https://github.com/kubernetes/helm/tree/master/docs">docs</a>)</p>
 <h2 id="choose-your-deployment-strategy">Choose Your Deployment Strategy<a class="headerlink" href="#choose-your-deployment-strategy" title="Permanent link">&para;</a></h2>
 <p>Drycc Workflow includes everything it needs to run out of the box. However, these defaults are aimed at simplicity rather than
 production readiness. Production and staging deployments of Workflow should, at a minimum, use off-cluster storage
@@ -502,7 +492,7 @@ storage</a> for more details.</p>
 * <a href="../managing-workflow/platform-logging/#configuring-off-cluster-redis">Redis</a> - Such as AWS Elasticache
 * <a href="../managing-workflow/platform-monitoring/#configuring-off-cluster-influxdb">InfluxDB</a> and <a href="../managing-workflow/platform-monitoring/#off-cluster-grafana">Grafana</a></p>
 <h4 id="ingress">Ingress<a class="headerlink" href="#ingress" title="Permanent link">&para;</a></h4>
-<p>Now, workflow requires that ingress and cert-manager must be installed. Any compatible Kubernetes entry controller can be used, but only ingress-nginx and ingress-traefik currently support enforced HTTPS and whitelist. Enable entries in accordance with [this guide] (entress.md).</p>
+<p>Now, workflow requires that ingress and cert-manager must be installed. Any compatible Kubernetes entry controller can be used, but only ingress-nginx and ingress-traefik currently support enforced HTTPS and whitelist. Enable entries in accordance with <a href="ingress/">this guide</a>.</p>
 <h2 id="add-the-drycc-chart-repository">Add the Drycc Chart Repository<a class="headerlink" href="#add-the-drycc-chart-repository" title="Permanent link">&para;</a></h2>
 <p>The Drycc Chart Repository contains everything needed to install Drycc Workflow onto a Kubernetes cluster, with a single <code>helm install drycc/workflow --namespace drycc --set global.platform_domain=yourdomain.com</code> command.</p>
 <p>Add this repository to Helm:</p>
@@ -510,6 +500,10 @@ storage</a> for more details.</p>
 </code></pre>
 
 <h2 id="install-drycc-workflow">Install Drycc Workflow<a class="headerlink" href="#install-drycc-workflow" title="Permanent link">&para;</a></h2>
+<p>If the version of helm is 3.0 +; you need to create the namespace in advance:</p>
+<pre class="codehilite"><code>kubectl create ns drycc
+</code></pre>
+
 <p>Now that Helm is installed and the repository has been added, install Workflow by running:</p>
 <pre class="codehilite"><code>$ helm install --namespace drycc \
     --set global.platform_domain=drycc.cc \
